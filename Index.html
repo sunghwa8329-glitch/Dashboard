@@ -57,29 +57,27 @@
 
     <script>
         // ⚠️ 본인의 Apps Script 웹 앱 URL을 반드시 여기에 붙여넣으세요!
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzcEzXwD51nDOLEZAlDDMZrmjqWb5eLAIbsvG2cZQ7nlT0YsRBBVZf3dqplkMuWzEe9Kw/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxLZzS5_djbZouiAGPG2wYtqr4G8L7hvxwKGMFztElA97AlyLxlDb2N4Gz1s-DvAsDU3Q/exec?action=data";
 
-        document.getElementById('load-btn').addEventListener('click', () => {
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerText = "로딩 중...";
+document.getElementById('load-btn').addEventListener('click', () => {
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerText = "로딩 중...";
 
-            // 비동기로 Apps Script URL에 요청 보냄 (Fetch API)
-            fetch(APPS_SCRIPT_URL)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('네트워크 응답에 문제가 있습니다.');
-                    }
-                    return response.text(); // 텍스트 형태 결과물 파싱
-                })
-                .then(data => {
-                    // 결과물을 화면에 표시
-                    resultDiv.innerText = data;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    resultDiv.innerText = "데이터를 가져오는 중 오류가 발생했습니다. (URL이나 권한 설정을 확인하세요)";
-                });
+    fetch(APPS_SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => {
+            // 구글에서 정상적으로 가져온 데이터를 Netlify 화면에 출력
+            resultDiv.innerHTML = `
+                <p><strong>총 매출액:</strong> ${data.kpi.totalSales}</p>
+                <p><strong>총 입고금액:</strong> ${data.kpi.totalInbound}</p>
+                <p><strong>주의 품목:</strong> ${data.kpi.alertItems}개</p>
+            `;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            resultDiv.innerText = "오류가 발생했습니다.";
         });
+});
     </script>
 
 </body>
